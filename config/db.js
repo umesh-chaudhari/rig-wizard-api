@@ -3,6 +3,7 @@ const {MongoClient} = require("mongodb")
 require("dotenv").config();
 
 const URL = process.env.MONGO_URL;
+const DB_NAME = process.env.DB_NAME;
 let dbConnection;
 
 module.exports = {
@@ -10,7 +11,7 @@ module.exports = {
         try {
             await MongoClient.connect(URL).then((client) => {
                 console.log("MongoDB Connected");
-                dbConnection = client.db()
+                dbConnection = client.db(DB_NAME)
             })
                 .catch((err) => {
                     console.log(err);
