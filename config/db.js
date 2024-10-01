@@ -15,8 +15,6 @@ module.exports = {
                 .catch((err) => {
                     console.log(err);
                 })
-            console.log('MongoDB connected successfully');
-            console.log(URL)
         } catch (error) {
             console.error('MongoDB connection failed:', error.message);
             process.exit(1); // Stop the server if the connection fails
