@@ -1,28 +1,25 @@
 const express = require('express');
 const Build = require('../models/build');
-const Case = require('../models/build');
 const router = express.Router();
 const {getDb} = require('../config/db');
-
 // Create a new PC build
 router.post('/new-build', async (req, res) => {
     try {
+        const db = getDb()
         console.log("api hit....")
         const { cpu, gpu, ram, motherboard, powerSupply, storage, pcCase, cooler } = req.body;
-        const newBuild = new Build({
-            cpu,
-            gpu,
-            ram,
-            motherboard,
-            storage,
-            powerSupply,
-            pcCase,
-            cooler
+
+        const buildData = { cpu, gpu, ram, motherboard, powerSupply, storage, pcCase, cooler };
+        Object.keys(buildData).forEach((key) => {
+            if (buildData[key]._id) delete buildData[key]._id;
         });
-        const build = await newBuild.save();
+        console.log(buildData);
+        const response = await db.collection('builds').insertOne(buildData);
+        console.log(response)
+        console.log("success")
         res.status(200)
-        res.json(build);
     } catch (error) {
+        console.log(error);
         res.status(500).send('Server Error');
     }
 });

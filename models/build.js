@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
-const stream = require("node:stream");
 
 const BuildSchema = new mongoose.Schema({
+    _id:{
+        type: mongoose.Schema.Types.ObjectId
+    },
     cpu: {
         type: Object,
         required: true,
@@ -33,22 +35,11 @@ const BuildSchema = new mongoose.Schema({
     cooler:{
         type: Object,
         required: false,
-    }
-    ,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
     },
-});
-
-const CpuSchema = new mongoose.Schema({
-
-})
-const caseSchema = new mongoose.Schema({
-    _id: mongoose.Types.ObjectId,
-    name: String,
-    type: String
-})
+}, { _id: true });
 
 module.exports = mongoose.model('Build', BuildSchema);
-module.exports = mongoose.model("Case", caseSchema);
