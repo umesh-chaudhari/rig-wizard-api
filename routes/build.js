@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {getDb} = require('../config/db');
-
+const {generatePCBuildPDF} = require('../utils/pdf');
+const path = require('path');
 router.post('/new-build', async (req, res) => {
     try {
         const db = getDb()
@@ -136,6 +137,47 @@ router.get('/storage', async (req, res) => {
                 res.json(data)
             });
     } catch (error) {
+        res.status(500).send(error);
+    }
+})
+
+
+router.post('/generate-pdf', async (req, res) => {
+    try {
+        const buildData = req.body
+        const imagesPath = path.join(__dirname, '..' ,'component-images');
+
+        console.log(imagesPath);
+        console.log(buildData)
+        console.log(Object.keys(buildData))
+        if (!buildData) {
+            return res.status(400).json({ error: 'Build data is required' });
+        }
+
+        const pdfBuffer = await generatePCBuildPDF(buildData, imagesPath);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename=pc-build-specifications.pdf');
+
+        res.send(pdfBuffer);
+
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        res.status(500).json({ error: 'Failed to generate PDF' });
+    }
+})
+
+router.get("/builds", async (req, res) => {
+    let data = []
+    try {
+        const db = getDb()
+        db.collection('builds')
+            .find()
+            .forEach((item) => data.push(item))
+            .then(() => {
+                res.json(data)
+            });
+    }
+    catch (error) {
         res.status(500).send(error);
     }
 })
